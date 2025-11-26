@@ -1,0 +1,101 @@
+{
+  "project": "fam-chat-time",
+  "version": "2.0",
+  "nodes": [
+    {
+      "id": "open-app",
+      "type": "trigger",
+      "label": "Open App",
+      "description": "User launches the family chat app",
+      "icon": "trigger"
+    },
+    {
+      "id": "check-auth",
+      "type": "decision",
+      "label": "Logged In?",
+      "description": "Check if user is already signed in",
+      "icon": "decision",
+      "_implementation": {
+        "files": ["hooks/useCurrentUser.tsx", "lib/firebase-auth.ts"],
+        "functions": ["AuthProvider", "checkAuthState", "fetchFullUser"]
+      }
+    },
+    {
+      "id": "login",
+      "type": "action",
+      "label": "Login",
+      "description": "Parent uses PIN, child taps their avatar",
+      "icon": "user",
+      "_implementation": {
+        "files": ["app/login.tsx", "lib/firebase-auth.ts"],
+        "functions": ["LoginScreen", "handleChildLogin", "handlePinSubmit", "signInUser"]
+      }
+    },
+    {
+      "id": "chat-list",
+      "type": "output",
+      "label": "Chat List",
+      "description": "See all family conversations",
+      "icon": "message",
+      "_implementation": {
+        "files": ["app/index.tsx", "hooks/useRealtimeUsers.ts"],
+        "functions": ["ChatListScreen", "setupRealtimeChats", "useRealtimeUsers"]
+      }
+    },
+    {
+      "id": "open-chat",
+      "type": "action",
+      "label": "Open Chat",
+      "description": "Tap a conversation to open it",
+      "icon": "message",
+      "_implementation": {
+        "files": ["app/chat/[chatId].tsx", "hooks/useChatMessages.ts"],
+        "functions": ["ChatScreen", "loadInitialMessages", "setupRealtimeListenerWithStartTime"]
+      }
+    },
+    {
+      "id": "send-message",
+      "type": "action",
+      "label": "Send Message",
+      "description": "Send text, photos, GIFs, or voice",
+      "icon": "message",
+      "_implementation": {
+        "files": ["hooks/useChatActions.ts", "lib/media-utils.ts"],
+        "functions": ["handleSendMessage", "handleSendGif", "handleTakePhoto", "handleStartRecording", "uploadMediaToFirebase"]
+      }
+    },
+    {
+      "id": "notification",
+      "type": "output",
+      "label": "Push Notification",
+      "description": "Family members get notified of new messages",
+      "icon": "notification",
+      "_implementation": {
+        "files": ["functions/src/index.ts", "lib/notification-utils.ts"],
+        "functions": ["sendPushNotification", "registerForPushNotificationsAsync"]
+      }
+    },
+    {
+      "id": "settings",
+      "type": "action",
+      "label": "Settings",
+      "description": "Change theme, edit profile, manage notifications",
+      "icon": "settings",
+      "_implementation": {
+        "files": ["app/settings.tsx", "hooks/useTheme.tsx", "components/ThemeSelector.tsx"],
+        "functions": ["SettingsScreen", "CustomThemeProvider", "setTheme"]
+      }
+    }
+  ],
+  "edges": [
+    { "source": "open-app", "target": "check-auth" },
+    { "source": "check-auth", "target": "login", "label": "No" },
+    { "source": "check-auth", "target": "chat-list", "label": "Yes" },
+    { "source": "login", "target": "chat-list" },
+    { "source": "chat-list", "target": "open-chat" },
+    { "source": "chat-list", "target": "settings" },
+    { "source": "open-chat", "target": "send-message" },
+    { "source": "send-message", "target": "notification" }
+  ],
+  "annotations": []
+}

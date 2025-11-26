@@ -1,0 +1,95 @@
+{
+  "project": "gmail-extractor",
+  "generated": "2025-11-26T12:00:00Z",
+  "nodes": [
+    {
+      "id": "file-main",
+      "type": "file",
+      "label": "gmail_extractor.py",
+      "path": "gmail/gmail_extractor.py",
+      "description": "Main script to extract emails from Gmail",
+      "children": [
+        {
+          "id": "func-auth",
+          "type": "function",
+          "label": "authenticate_gmail",
+          "line": 25,
+          "description": "OAuth2 authentication with Gmail API"
+        },
+        {
+          "id": "func-search",
+          "type": "function",
+          "label": "search_emails",
+          "line": 60,
+          "description": "Query Gmail for messages from sender"
+        },
+        {
+          "id": "func-body",
+          "type": "function",
+          "label": "get_email_body",
+          "line": 100,
+          "description": "Extract plain text from email payload"
+        },
+        {
+          "id": "func-save",
+          "type": "function",
+          "label": "save_to_file",
+          "line": 150,
+          "description": "Write extracted emails to txt file"
+        },
+        {
+          "id": "func-main",
+          "type": "function",
+          "label": "main",
+          "line": 180,
+          "description": "Entry point orchestrating the flow"
+        }
+      ]
+    },
+    {
+      "id": "file-creds",
+      "type": "file",
+      "label": "credentials.json",
+      "path": "gmail/credentials.json",
+      "description": "OAuth2 client credentials from Google Cloud",
+      "children": []
+    },
+    {
+      "id": "file-token",
+      "type": "file",
+      "label": "token.json",
+      "path": "gmail/token.json",
+      "description": "Cached user authentication token",
+      "children": []
+    },
+    {
+      "id": "file-output",
+      "type": "file",
+      "label": "emails.txt",
+      "path": "gmail/liam_ottley_emails.txt",
+      "description": "Output file with extracted email content",
+      "children": []
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1",
+      "source": "file-creds",
+      "target": "file-main",
+      "label": "OAuth config"
+    },
+    {
+      "id": "edge-2",
+      "source": "file-main",
+      "target": "file-token",
+      "label": "stores token"
+    },
+    {
+      "id": "edge-3",
+      "source": "file-main",
+      "target": "file-output",
+      "label": "writes emails"
+    }
+  ],
+  "annotations": []
+}
